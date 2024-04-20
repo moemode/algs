@@ -1,5 +1,3 @@
-import unittest
-
 """
 Problem 0-6. 
 An increasing subarray of an integer array is any consecutive sequence of array integers whose values strictly increase.
@@ -8,6 +6,8 @@ and returns the number of longest increasing subarrays of A, i.e., the number of
 For example, if A = (1,3,4,2,7,5,6,9,8), your program should return 2 since the maximum length of any increasing subarray of A is three 
 and there are two increasing subarrays with that length: specifically, subarrays (1,3,4) and (5,6,9). 
 """
+
+import unittest
 
 
 def count_long_subarrays(numbers: tuple) -> int:
