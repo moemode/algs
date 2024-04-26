@@ -1,9 +1,11 @@
-"""
-Problem 1-4. Brick Blowing
-Porkland is a community of pigs who live in n houses lined up along one side of a long, straight street running east to west. 
-Every house in Porkland was built from straw and bricks, but some houses were built with more bricks than others. 
+"""Problem 1-4. Brick Blowing
+Porkland is a community of pigs who live in n houses lined up along one side of a long, 
+straight street running east to west. 
+Every house in Porkland was built from straw and bricks, 
+but some houses were built with more bricks than others. 
 One day, a wolf arrives in Porkland and all the pigs run inside their homes to hide. 
-Unfortunately for the pigs, this wolf is extremely skilled at blowing down pig houses, aided by a strong wind already blowing from west to east. 
+Unfortunately for the pigs, this wolf is extremely skilled at blowing down pig houses, 
+aided by a strong wind already blowing from west to east. 
 If the wolf blows in an easterly direction on a house containing b bricks, that house will fall down, 
 along with every house east of it containing strictly fewer than b bricks. 
 For every house in Porkland, the wolf wants to know its damage, 
@@ -40,7 +42,6 @@ def build_elements(A: list[int]) -> list[Element]:
     Returns:
         list[Element]: A list of elements, where each element is created
         using the position and number from the input list.
-
     """
     return [Element(pos, 1, number) for pos, number in enumerate(A)]
 
