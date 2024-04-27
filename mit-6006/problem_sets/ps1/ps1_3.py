@@ -60,6 +60,34 @@ class BinderDatabase:
         i -= self.n_in_between()
         return self.binder[self.after_right + i]
 
+    def inc_left(self):
+        if self.left >= self.right:
+            raise IndexError("Can move left past right page")
+        # self.left < self.right
+        move_to = self.before_left + 1
+        move_from = self.between_start
+        self.binder[move_to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.before_left += 1
+        self.between_start += 1
+        self.left += 1
+
+    def dec_left(self):
+        if self.left - 1 < -1:
+            raise IndexError("Can move left past first page")
+
+    def inc_right(self):
+        if self.right >= self.N - 1:
+            raise IndexError("Can't move right past last page")
+        # self.right < self.N - 1
+        move_to = self.between_end + 1
+        move_from = self.after_right
+        self.binder[move_to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.between_end += 1
+        self.after_right -= 1
+        self.right += 1
+
     def __str__(self):
         # visualize self.binder and the pointers
         return "-".join([str(x) for x in self.binder])
@@ -83,4 +111,11 @@ if __name__ == "__main__":
     b = BinderDatabase([1, 2, 3, 4, 5, 6, 7], 2, 5)
     for i in range(7):
         print(b.read_page(i))
+    b.inc_left()
     print(b)
+    b.inc_right()
+    print(b)
+    try:
+        b.inc_right()
+    except:
+        pass
