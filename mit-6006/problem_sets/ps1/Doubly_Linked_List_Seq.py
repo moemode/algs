@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any, Optional
 
 
@@ -106,8 +107,20 @@ class DoublyLinkedListSeq:
         sublist.tail = node2
         return sublist
 
-    def splice(self, x, L2):
-        ###########################
-        # Part (c): Implement me! #
-        ###########################
-        pass
+    def splice(
+        self, insert_after: DoublyLinkedListNode, other_list: DoublyLinkedListSeq
+    ):
+        if not other_list.head:
+            # other_list is empty
+            return
+        post = insert_after.next
+        insert_after.next = other_list.head
+        other_list.head.prev = insert_after
+        if post:
+            post.prev = other_list.tail
+            other_list.tail.next = post
+        else:
+            # no post so tail of other_list is new tail of this list
+            self.tail = other_list.tail
+        other_list.head = None
+        other_list.tail = None
