@@ -28,6 +28,12 @@ class BinderAPI:
     def a_is_left(self) -> bool:
         return self.marks["A"] <= self.marks["B"]
 
+    def m_is_left(self, m: str):
+        return (m == "A" and self.a_is_left()) or (m == "B" and not self.a_is_left())
+
+    def left_mark(self) -> str:
+        return "A" if self.a_is_left() else "B"
+
     def place_mark(self, i: int, m: str):
         self.marks[m] = i
         if self.marks_are_placed() and not self.binder:
@@ -47,15 +53,42 @@ class BinderAPI:
         else:
             return self.elements[i]
 
+    def shift_mark(self, m: str, d: int):
+        """
+        a = self.marks["A"]
+        b = self.marks["B"]
+        new_a = self.marks["A"] + (d if m == "A" else 0)
+        new_b = self.marks["B"] + (d if m == "B" else 0)
+        if (a <= b) == (new_a <= new_b):
+            # relative order of A, B is kept
+            m_is_left = self.m_is_left(m)
+            self.binder.shift(d, m_is_left)
+
+        self.marks["A"] = new_a
+        self.marks["B"] = new_b
+        """
+        a = self.marks["A"]
+        b = self.marks["B"]
+        new_a = self.marks["A"] + (d if m == "A" else 0)
+        new_b = self.marks["B"] + (d if m == "B" else 0)
+        left, right = min(a, b), max(a, b)
+        new_left, new_right = min(new_a, new_b), max(new_a, new_b)
+        print(self.binder.__str__(True))
+        self.binder.shift(new_left - left, True)
+        print(self.binder.__str__(True))
+        self.binder.shift(new_right - right, False)
+        print(self.binder.__str__(True))
+        self.marks[m] += d
+
     def move_page(self, m: str):
         if not self.marks_are_placed():
             raise ValueError("Cannot move page unless both markers are placed.")
-        from_left = (m == "A" and self.a_is_left()) or (
-            m == "B" and not self.a_is_left()
-        )
+        from_left = self.m_is_left(m)
         if from_left:
+            self.marks[self.left_mark()] -= 1
             self.binder.move_page_left_to_right()
         else:
+            self.marks[self.left_mark()] += 1
             self.binder.move_page_right_to_left()
 
 
@@ -100,9 +133,23 @@ class BinderDatabase:
         i -= self.n_in_between()
         return self.binder[self.after_right + i]
 
+    def shift(self, d: int, left: bool):
+        is_negative = d < 0
+        for i in range(abs(d)):
+            if left:
+                if is_negative:
+                    self.dec_left()
+                else:
+                    self.inc_left()
+            else:
+                if is_negative:
+                    self.dec_right()
+                else:
+                    self.inc_right()
+
     def inc_left(self):
         if self.left >= self.right:
-            raise IndexError("Can move left past right")
+            raise IndexError("Cannot move left past right")
         # self.left < self.right
         move_to = self.before_left + 1
         move_from = self.between_start
@@ -219,6 +266,21 @@ def binderdb_test():
 if __name__ == "__main__":
     b = BinderAPI([1, 2, 3, 4, 5, 6, 7])
     b.place_mark(5, "A")
+    b.place_mark(-1, "B")
+    b.shift_mark("B", 7)
+    print(b.binder.__str__(True))
+    b.move_page("B")
+    print(b.binder.__str__(True))
+
+    """
+    b.place_mark(5, "A")
     b.place_mark(2, "B")
+    print(b.marks)
     b.move_page("A")
-    print(b.binder)
+    print(b.marks)
+    print(b.binder.__str__(True))
+    b.shift_mark("B", -4)
+    print(b.binder.__str__(True))
+    b.shift_mark("B", 8)
+    print(b.binder.__str__(True))
+    """
