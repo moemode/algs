@@ -16,7 +16,47 @@ For each operation, state whether your running time is worst-case or amortized.
 """
 
 from typing import Optional, Any
-from collections import deque
+
+
+class BinderAPI:
+
+    def __init__(self, elements: list[Any]):
+        self.marks = {"A": None, "B": None}
+        self.binder: Optional[BinderDatabase] = None
+        self.elements = elements
+
+    def a_is_left(self) -> bool:
+        return self.marks["A"] <= self.marks["B"]
+
+    def place_mark(self, i: int, m: str):
+        self.marks[m] = i
+        if self.marks_are_placed() and not self.binder:
+            self.binder = BinderDatabase(
+                self.elements,
+                min(self.marks["A"], self.marks["B"]),
+                max(self.marks["A"], self.marks["B"]),
+            )
+            self.elements = None
+
+    def marks_are_placed(self) -> bool:
+        return self.marks["A"] is not None and self.marks["B"] is not None
+
+    def read_page(self, i: int):
+        if self.marks_are_placed():
+            return self.binder.read_page(i)
+        else:
+            return self.elements[i]
+
+    def move_page(self, m: str):
+        if not self.marks_are_placed():
+            raise ValueError("Cannot move page unless both markers are placed.")
+        from_left = (m == "A" and self.a_is_left()) or (
+            m == "B" and not self.a_is_left()
+        )
+        if from_left:
+            self.binder.move_page_left_to_right()
+        else:
+            self.binder.move_page_right_to_left()
 
 
 class BinderDatabase:
@@ -153,7 +193,7 @@ class BinderDatabase:
         self.left += 1
 
 
-if __name__ == "__main__":
+def binderdb_test():
     b = BinderDatabase([1, 2, 3, 4, 5, 6, 7], 2, 5)
     for i in range(7):
         print(b.read_page(i))
@@ -174,3 +214,11 @@ if __name__ == "__main__":
     print(b.__str__(True))
     b.move_page_right_to_left()
     print(b.__str__(True))
+
+
+if __name__ == "__main__":
+    b = BinderAPI([1, 2, 3, 4, 5, 6, 7])
+    b.place_mark(5, "A")
+    b.place_mark(2, "B")
+    b.move_page("A")
+    print(b.binder)
