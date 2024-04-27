@@ -1,5 +1,5 @@
 import unittest
-from Doubly_Linked_List_Seq import DoublyLinkedListSeq
+from DoublyLinkedListSeq import DoublyLinkedListSeq
 
 # Change to True to visualize output
 verbose = False

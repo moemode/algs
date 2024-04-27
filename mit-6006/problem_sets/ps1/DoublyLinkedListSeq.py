@@ -1,8 +1,18 @@
+"""
+DoublyLinkedListSeq Implementation.
+"""
+
 from __future__ import annotations
 from typing import Any, Optional
 
 
 class DoublyLinkedListNode:
+    """
+    Each node x of a doubly linked list maintains an x.prev pointer
+    to the node preceeding it in the sequence,
+    in addition to an x.next pointer to the node following it in the sequence.
+    """
+
     def __init__(self, x: Any):
         self.item: Any = x
         self.prev: Optional[DoublyLinkedListNode] = None
@@ -16,6 +26,12 @@ class DoublyLinkedListNode:
 
 
 class DoublyLinkedListSeq:
+    """
+    A doubly linked list L maintains a pointer to L.tail,
+    the last node in the sequence, in addition to L.head,
+    the first node in the sequence.
+    """
+
     def __init__(self):
         self.head: Optional[DoublyLinkedListNode] = None
         self.tail: Optional[DoublyLinkedListNode] = None
@@ -44,7 +60,12 @@ class DoublyLinkedListSeq:
         node = self.head.later_node(i)
         node.item = x
 
-    def insert_first(self, x):
+    def insert_first(self, x: Any) -> None:
+        """Inserts a new node with the given value at the beginning of the sequence.
+
+        Args:
+            x (Any): The value to be inserted.
+        """
         new_node = DoublyLinkedListNode(x)
         old_head = self.head
         if old_head:
@@ -54,7 +75,12 @@ class DoublyLinkedListSeq:
         if not self.tail:
             self.tail = self.head
 
-    def insert_last(self, x):
+    def insert_last(self, x) -> None:
+        """Inserts a new node with the given value at the end of the doubly linked list.
+
+        Args:
+            x (Any): The value to be inserted.
+        """
         new_node = DoublyLinkedListNode(x)
         old_tail = self.tail
         if old_tail:
@@ -64,7 +90,15 @@ class DoublyLinkedListSeq:
         if not self.head:
             self.head = self.tail
 
-    def delete_first(self):
+    def delete_first(self) -> Any:
+        """Remove and return the first item from the doubly linked list.
+
+        Raises:
+            IndexError: If the doubly linked list is empty.
+
+        Returns:
+            Any: The item that was removed from the doubly linked list.
+        """
         if not self.head:
             raise IndexError()
         to_delete = self.head
@@ -81,6 +115,14 @@ class DoublyLinkedListSeq:
         return to_delete.item
 
     def delete_last(self):
+        """Remove and return the last item from the doubly linked list.
+
+        Raises:
+            IndexError: If the doubly linked list is empty.
+
+        Returns:
+            Any: The item that was removed from the doubly linked list.
+        """
         if not self.tail:
             raise IndexError()
         to_delete = self.tail
@@ -96,7 +138,19 @@ class DoublyLinkedListSeq:
             self.tail = pre
         return to_delete.item
 
-    def remove(self, node1: DoublyLinkedListNode, node2: DoublyLinkedListNode):
+    def remove(
+        self, node1: DoublyLinkedListNode, node2: DoublyLinkedListNode
+    ) -> DoublyLinkedListSeq:
+        """Given two nodes x1 and x2 from a doubly linked list L, where x1 occurs before x2,
+          remove all nodes from x1 to x2 inclusive from L, and return them as a new doubly linked list.
+
+        Args:
+            node1 (DoublyLinkedListNode): The first node in the range to be removed.
+            node2 (DoublyLinkedListNode): The last node in the range to be removed.
+
+        Returns:
+            DoublyLinkedListSeq: A new doubly linked list containing the removed nodes.
+        """
         sublist = DoublyLinkedListSeq()
         pre = node1.prev
         post = node2.next
@@ -116,7 +170,17 @@ class DoublyLinkedListSeq:
 
     def splice(
         self, insert_after: DoublyLinkedListNode, other_list: DoublyLinkedListSeq
-    ):
+    ) -> None:
+        """Splice list other_list into list self after node x.
+
+        Given node x from a doubly linked list self and second doubly linked list other_list,
+        this method splices list other_list into list self after node x. After the splice operation,
+        self should contain all items previously in either list, and other_list should be empty.
+
+        Args:
+            insert_after (DoublyLinkedListNode): The node in self after which other_list should be spliced.
+            other_list (DoublyLinkedListSeq): The second doubly linked list other_list to be spliced into self.
+        """
         if not other_list.head:
             # other_list is empty
             return
