@@ -70,9 +70,7 @@ class DoublyLinkedListSeq:
             succ.prev = None
             to_delete.next = None
             self.head = succ
-        item = to_delete.item
-        to_delete.item = None
-        return item
+        return to_delete.item
 
     def delete_last(self):
         if not self.tail:
@@ -88,16 +86,25 @@ class DoublyLinkedListSeq:
             pre.next = None
             to_delete.prev = None
             self.tail = pre
-        item = to_delete.item
-        to_delete.item = None
-        return item
+        return to_delete.item
 
-    def remove(self, x1, x2):
-        L2 = DoublyLinkedListSeq()
-        ###########################
-        # Part (b): Implement me! #
-        ###########################
-        return L2
+    def remove(self, node1: DoublyLinkedListNode, node2: DoublyLinkedListNode):
+        sublist = DoublyLinkedListSeq()
+        pre = node1.prev
+        post = node2.next
+        if self.head == node1:
+            self.head = post
+        if self.tail == node2:
+            self.tail = pre
+        if pre:
+            node1.prev = None
+            pre.next = post
+        if post:
+            node2.next = None
+            post.prev = pre
+        sublist.head = node1
+        sublist.tail = node2
+        return sublist
 
     def splice(self, x, L2):
         ###########################
