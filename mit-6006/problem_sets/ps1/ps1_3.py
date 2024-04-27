@@ -62,7 +62,7 @@ class BinderDatabase:
 
     def inc_left(self):
         if self.left >= self.right:
-            raise IndexError("Can move left past right page")
+            raise IndexError("Can move left past right")
         # self.left < self.right
         move_to = self.before_left + 1
         move_from = self.between_start
@@ -72,45 +72,92 @@ class BinderDatabase:
         self.between_start += 1
         self.left += 1
 
-    def dec_left(self):
-        if self.left - 1 < -1:
-            raise IndexError("Can move left past first page")
-
     def inc_right(self):
-        if self.right >= self.N - 1:
-            raise IndexError("Can't move right past last page")
+        if self.right + 1 >= self.N:
+            raise IndexError("Right marker is already behind last page.")
         # self.right < self.N - 1
         move_to = self.between_end + 1
         move_from = self.after_right
         self.binder[move_to] = self.binder[move_from]
         self.binder[move_from] = None
         self.between_end += 1
-        self.after_right -= 1
+        self.after_right += 1
         self.right += 1
 
-    def __str__(self):
-        # visualize self.binder and the pointers
-        return "-".join([str(x) for x in self.binder])
+    def dec_left(self):
+        if self.left - 1 < -1:
+            raise IndexError("Left marker is already before first page.")
+        move_to = self.between_start - 1
+        move_from = self.before_left
+        self.binder[move_to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.before_left -= 1
+        self.between_start -= 1
+        self.left -= 1
 
-    def shift_mark(self, m: str, d: int) -> None:
-        """
-        Take the bookmark m ∈ {A,B}, currently in front of the page at index i,
-        and move it in front of the page at index i + d for d ∈ {−1, 1} in O(1) time.
-        """
-        pass
+    def dec_right(self):
+        if self.right <= self.left:
+            raise IndexError("Can move right marker past left")
+        move_to = self.after_right - 1
+        move_from = self.between_end
+        self.binder[move_to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.between_end -= 1
+        self.after_right -= 1
+        self.right -= 1
 
-    def move_page(self, m: str) -> None:
+    def __str__(self, show_pointers=False):
+        # visualize self.binder and the pointers, render None as X
+        # render the four pointers in the line above
+        pointers = [" "] * (len(self.binder) + 2)
+        pointers[self.before_left + 1] = "A"
+        pointers[self.between_start + 1] = "B"
+        pointers[self.between_end + 1] = "C"
+        pointers[self.after_right + 1] = "D"
+        pointer_line = "-".join(pointers) + "\n" + "  "
+        prefix = pointer_line if show_pointers else ""
+        return prefix + "-".join([str(x) if x else "X" for x in self.binder])
+
+    def move_page_left_to_right(self) -> None:
         """
-        Take the page currently in front of bookmark m ∈ {A,B}, and move it
+        Take the page currently in front of bookmark left, and move it
         in front of the other bookmark in O(1) time.
         """
-        pass
+        if self.left == self.right:
+            return
+        if self.left == -1:
+            raise IndexError("No page before left.")
+        to = self.between_end + 1
+        move_from = self.before_left
+        self.binder[to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.before_left -= 1
+        self.between_end += 1
+        self.left -= 1
+
+    def move_page_right_to_left(self) -> None:
+        """
+        Take the page currently in front of bookmark left, and move it
+        in front of the other bookmark in O(1) time.
+        """
+        if self.left == self.right:
+            return
+        if self.left == -1:
+            raise IndexError("No page before left.")
+        to = self.before_left + 1
+        move_from = self.between_end
+        self.binder[to] = self.binder[move_from]
+        self.binder[move_from] = None
+        self.before_left += 1
+        self.between_end -= 1
+        self.left += 1
 
 
 if __name__ == "__main__":
     b = BinderDatabase([1, 2, 3, 4, 5, 6, 7], 2, 5)
     for i in range(7):
         print(b.read_page(i))
+    print(b)
     b.inc_left()
     print(b)
     b.inc_right()
@@ -119,3 +166,11 @@ if __name__ == "__main__":
         b.inc_right()
     except:
         pass
+    b.dec_left()
+    print(b)
+    b.dec_right()
+    print(b)
+    b.move_page_left_to_right()
+    print(b.__str__(True))
+    b.move_page_right_to_left()
+    print(b.__str__(True))
