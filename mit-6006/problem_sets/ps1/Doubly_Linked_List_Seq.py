@@ -29,6 +29,9 @@ class DoublyLinkedListSeq:
     def __str__(self):
         return "-".join([("(%s)" % x) for x in self])
 
+    def __repr__(self):
+        return "-".join([("(%s)" % x) for x in self])
+
     def build(self, X):
         for a in X:
             self.insert_last(a)
@@ -48,6 +51,8 @@ class DoublyLinkedListSeq:
             new_node.next = old_head
             old_head.prev = new_node
         self.head = new_node
+        if not self.tail:
+            self.tail = self.head
 
     def insert_last(self, x):
         new_node = DoublyLinkedListNode(x)
@@ -56,6 +61,8 @@ class DoublyLinkedListSeq:
             new_node.prev = old_tail
             old_tail.next = new_node
         self.tail = new_node
+        if not self.head:
+            self.head = self.tail
 
     def delete_first(self):
         if not self.head:
