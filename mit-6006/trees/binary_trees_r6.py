@@ -1,15 +1,34 @@
+"""This module implements a binary tree."""
+
 from __future__ import annotations
-from typing import Any
+from typing import Any, Optional
 
 
 class BinaryNode:
+    """
+    A class representing a node in a binary tree.
+
+    Attributes:
+        item: The value stored in the node.
+        left: The left child of the node.
+        right: The right child of the node.
+        parent: The parent of the node.
+    """
+
     def __init__(self, x: Any):
         self.item = x
-        self.left: BinaryNode = None
-        self.right: BinaryNode = None
-        self.parent: BinaryNode = None
+        self.left: Optional[BinaryNode] = None
+        self.right: Optional[BinaryNode] = None
+        self.parent: Optional[BinaryNode] = None
 
     def subtree_iter(self):
+        """
+        Generator function that yields
+        all nodes in the subtree rooted at the current node.
+
+        Yields:
+            Node: The next node in the subtree.
+        """
         if self.left:
             yield from self.left.subtree_iter()
         yield self
@@ -38,7 +57,7 @@ class BinaryNode:
 
     def predecessor(self):
         if self.left:
-            return self.right.subtree_last()
+            return self.left.subtree_last()
         ancestor = self
         while ancestor.parent and ancestor.parent.left == ancestor:
             ancestor = ancestor.parent
@@ -73,10 +92,10 @@ class BinaryNode:
             else:
                 self.parent.right = None
         elif self.left:
-            # predecessor is garanteed to be down the tree in left subtree of self
+            # predecessor is guaranteed to be down the tree in left subtree of self
             lower_node = self.predecessor()
         elif self.right:
-            # successor is garanteed to be down the tree in right subtree of self
+            # successor is guaranteed to be down the tree in right subtree of self
             lower_node = self.successor()
         self.item, lower_node.item = lower_node.item, self.item
         lower_node.subtree_delete()
