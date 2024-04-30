@@ -99,3 +99,39 @@ class BinaryNode:
             lower_node = self.successor()
         self.item, lower_node.item = lower_node.item, self.item
         lower_node.subtree_delete()
+
+
+class BinaryTree:
+    """
+    Represents a binary tree data structure.
+
+    Attributes:
+        root (Optional[BinaryNode]): The root node of the binary tree.
+        size (int): The number of nodes in the binary tree.
+        node_type (type): The type of nodes in the binary tree.
+    """
+
+    def __init__(self, node_type=BinaryNode):
+        self.root: Optional[BinaryNode] = None
+        self.size = 0
+        self.node_type = node_type
+
+    def __len__(self):
+        """
+        Returns the number of nodes in the binary tree.
+
+        Returns:
+            int: The number of nodes in the binary tree.
+        """
+        return self.size
+
+    def __iter__(self):
+        """
+        Returns an iterator that iterates over the nodes in the binary tree.
+
+        Yields:
+            BinaryNode: The next node in the binary tree.
+        """
+        if self.root:
+            for n in self.root.subtree_iter():
+                yield n
