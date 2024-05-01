@@ -253,6 +253,34 @@ class BSTNode(BinaryNode):
                 return n
         return self
 
+    def subtree_find_prev(self, k):
+        if self.item.key >= k:
+            # if prev exists it is in left subtree
+            if self.left:
+                return self.left.subtree_find_prev(k)
+            else:
+                return None
+        # self.item.key < k
+        elif self.right:
+            n = self.right.subtree_find_prev(k)
+            if n:
+                return n
+        return self
+
+    def subtree_insert(self, new_node):
+        if new_node.item.key < self.item.key:
+            if self.left:
+                self.left.subtree_insert(new_node)
+            else:
+                self.subtree_insert_before(new_node)
+        if new_node.item.key > self.item.key:
+            if self.right:
+                self.right.subtree_insert(new_node)
+            else:
+                self.subtree_insert_after(new_node)
+        else:
+            self.item = new_node.item
+
 
 if __name__ == "__main__":
     seq = [37, 13, 49, 12, 39, 11]
