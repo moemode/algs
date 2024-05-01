@@ -86,19 +86,20 @@ class BinaryNode:
         return self.left is None and self.right is None
 
     def subtree_delete(self):
-        if self.is_leaf() and self.parent:
+        if self.left or self.right:
+            if self.left:
+                lower_node = self.predecessor()
+            else:
+                lower_node = self.successor()
+            self.item, lower_node.item = lower_node.item, self.item
+            return lower_node.subtree_delete()
+        # self is leaf
+        if self.parent:
             if self.parent.left == self:
                 self.parent.left = None
             else:
                 self.parent.right = None
-        elif self.left:
-            # predecessor is guaranteed to be down the tree in left subtree of self
-            lower_node = self.predecessor()
-        elif self.right:
-            # successor is guaranteed to be down the tree in right subtree of self
-            lower_node = self.successor()
-        self.item, lower_node.item = lower_node.item, self.item
-        lower_node.subtree_delete()
+        return self
 
     def __str__(self) -> str:
         return self.subtree_2d()
@@ -280,6 +281,146 @@ class BSTNode(BinaryNode):
                 self.subtree_insert_after(new_node)
         else:
             self.item = new_node.item
+
+
+class Set_Binary_Tree(BinaryTree):
+    """
+    Implementation of a Binary Search Tree (BST) that represents a set of unique elements.
+    Inherits from Binary_Tree.
+    """
+
+    def __init__(self):
+        """
+        Initialize the Set_Binary_Tree object.
+        """
+        super().__init__(BSTNode)
+
+    def iter_order(self):
+        """
+        Perform an iterative inorder traversal of the tree.
+
+        Yields:
+            Node: Nodes in the tree in inorder traversal.
+        """
+        yield from self
+
+    def build(self, X: Any):
+        """
+        Build the tree by inserting elements from the iterable X.
+
+        Args:
+            X (iterable): An iterable collection of elements to be inserted into the tree.
+        """
+        for x in X:
+            self.insert(x)
+
+    def find_min(self):
+        """
+        Find and return the minimum element in the tree.
+
+        Returns:
+            Any: The minimum element in the tree.
+        """
+        if not self.root:
+            raise ValueError("Tree is empty, cannot find minimum element.")
+        return self.root.subtree_first().item
+
+    def find_max(self):
+        """
+        Find and return the maximum element in the tree.
+
+        Returns:
+            Any: The maximum element in the tree.
+        """
+        if not self.root:
+            raise ValueError("Tree is empty, cannot find maximum element.")
+        return self.root.subtree_last().item
+
+    def find(self, k):
+        """
+        Find an element with key k in the tree and return it if found.
+
+        Args:
+            k (Any): The element to search for.
+
+        Returns:
+            Any: The element k if found, otherwise None.
+        """
+        if self.root:
+            n = self.root.subtree_find(k)
+            if n:
+                return n.item
+
+    def find_next(self, k):
+        """
+        Find the smallest element that is greater than k.
+
+        Args:
+            k (Any): The element for which the successor is to be found.
+
+        Returns:
+            Any: The next element greater than k, if exists.
+        """
+        if self.root:
+            n = self.root.subtree_find_next(k)
+            if n:
+                return n.item
+
+    def find_prev(self, k):
+        """
+        Find the largest element that is smaller than k.
+
+        Args:
+            k (Any): The element for which the predecessor is to be found.
+
+        Returns:
+            Any: The previous element smaller than k, if exists.
+        """
+        if self.root:
+            n = self.root.subtree_find_prev(k)
+            if n:
+                return n.item
+
+    def insert(self, x):
+        """
+        Insert a new element x into the tree.
+
+        Args:
+            x (Any): The element to insert into the tree.
+
+        Returns:
+            bool: True if new node was added, False if overwrite.
+        """
+        new_node = BSTNode(x)
+        if self.root:
+            self.root.subtree_insert(new_node)
+            if new_node.parent is None:
+                # item was swapped, because x.key existed already
+                return False
+        else:
+            self.root = new_node
+        self.size += 1
+
+    def delete(self, k):
+        """
+        Delete the element with value k from the tree.
+
+        Args:
+            k (Any): The element to delete from the tree.
+
+        Returns:
+            Any: The deleted element if found and deleted, otherwise None.
+        """
+        if not self.root:
+            raise ValueError("Tree is empty, cannot delete")
+        node = self.root.subtree_find(k)
+        if not node:
+            raise ValueError(f"No item for key={k}")
+        removed = node.subtree_delete()
+        if removed.parent is None:
+            self.root = None
+        self.size -= 1
+        return removed.item
 
 
 if __name__ == "__main__":
