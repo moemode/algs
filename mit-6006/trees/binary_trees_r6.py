@@ -100,6 +100,20 @@ class BinaryNode:
         self.item, lower_node.item = lower_node.item, self.item
         lower_node.subtree_delete()
 
+    def __str__(self) -> str:
+        return self.subtree_2d()
+
+    def subtree_2d(self, space=0, LEVEL_SPACE=5) -> str:
+        out = ""
+        space += LEVEL_SPACE
+        if self.right:
+            out = self.right.subtree_2d(space)
+        out += " " * len(range(LEVEL_SPACE, space))
+        out += ("|" + str(self.item) + "|<") + "\n"
+        if self.left:
+            out += self.left.subtree_2d(space)
+        return out
+
 
 class BinaryTree:
     """
@@ -135,3 +149,83 @@ class BinaryTree:
         if self.root:
             for n in self.root.subtree_iter():
                 yield n
+
+    def __str__(self) -> str:
+        if not self.root:
+            return "<empty>"
+        else:
+            return self.root.__str__()
+
+    def render_tree(self) -> str:
+        """
+        Renders the binary tree as a string representation.
+
+        Returns:
+            str: The string representation of the binary tree.
+        """
+        if not self.root:
+            return "<empty tree>"
+
+        lines = []
+        current_level = [self.root]
+
+        while any(current_level):
+            next_level = []
+            line = ""
+
+            for node in current_level:
+                if node:
+                    line += f" {node.item} "
+                    if node.left:
+                        next_level.append(node.left)
+                    if node.right:
+                        next_level.append(node.right)
+                else:
+                    line += "   "  # Placeholder for empty node
+
+            lines.append(line)
+            current_level = next_level
+        # Join lines with newline characters
+        return "\n".join(lines)
+
+
+def construct_binary_tree(seq: list[Any]) -> BinaryTree:
+    """
+    Constructs a binary tree from the given list of items A.
+
+    The tree constructed ensures:
+    1. The item stored in the ith node of T's traversal order is item ai.
+    2. The tree has height O(log n).
+
+    Args:
+        A (List): List of items to be stored in the binary tree nodes.
+
+    Returns:
+        BinaryTree: The constructed binary tree.
+    """
+    root = construct_binary_tree_rec(seq, 0, len(seq))
+    b = BinaryTree()
+    b.root = root
+    b.size = len(seq)
+    return b
+
+
+def construct_binary_tree_rec(seq: list[Any], l, r) -> Optional[BinaryNode]:
+    # recursively construct binary tree from items in A[l:r]
+    if l >= r:
+        return None
+    c = (l + r) // 2
+    root = BinaryNode(seq[c])
+    if l < c:
+        root.left = construct_binary_tree_rec(seq, l, c)
+        root.left.parent = root
+    if c + 1 < r:
+        root.right = construct_binary_tree_rec(seq, c + 1, r)
+        root.right.parent = root
+    return root
+
+
+if __name__ == "__main__":
+    seq = [37, 13, 49, 12, 39, 11]
+    b = construct_binary_tree(seq)
+    print(b)
