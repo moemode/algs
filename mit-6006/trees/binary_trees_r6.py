@@ -227,7 +227,7 @@ def construct_binary_tree_rec(seq: list[Any], l, r) -> Optional[BinaryNode]:
 
 class BSTNode(BinaryNode):
 
-    def subtree_find_if_present(self, k) -> Optional[BSTNode]:
+    def subtree_find(self, k) -> Optional[BSTNode]:
         # find node storing k else find predecessor
         if k == self.item.key:
             return self
@@ -236,7 +236,7 @@ class BSTNode(BinaryNode):
         if k > self.item.key:
             subtree = self.right
         if subtree:
-            subtree.subtree_find(k)
+            return subtree.subtree_find(k)
         else:
             return None
 
