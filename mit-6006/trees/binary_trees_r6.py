@@ -225,6 +225,35 @@ def construct_binary_tree_rec(seq: list[Any], l, r) -> Optional[BinaryNode]:
     return root
 
 
+class BSTNode(BinaryNode):
+
+    def subtree_find_if_present(self, k) -> Optional[BSTNode]:
+        # find node storing k else find predecessor
+        if k == self.item.key:
+            return self
+        if k < self.item.key:
+            subtree = self.left
+        if k > self.item.key:
+            subtree = self.right
+        if subtree:
+            subtree.subtree_find(k)
+        else:
+            return None
+
+    def subtree_find_next(self, k):
+        # find k if its in tree or its predecessor in traversal order
+        if self.item.key <= k:
+            if self.right:
+                return self.right.subtree_find_next(k)
+            else:
+                return None
+        elif self.left:
+            n = self.left.subtree_find_next(k)
+            if n:
+                return n
+        return self
+
+
 if __name__ == "__main__":
     seq = [37, 13, 49, 12, 39, 11]
     b = construct_binary_tree(seq)
