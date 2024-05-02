@@ -127,7 +127,7 @@ class BinaryTree:
     """
 
     def __init__(self, node_type=BinaryNode):
-        self.root: Optional[BinaryNode] = None
+        self.root: Optional[node_type] = None
         self.size = 0
         self.node_type = node_type
 
@@ -156,38 +156,6 @@ class BinaryTree:
             return "<empty>"
         else:
             return self.root.__str__()
-
-    def render_tree(self) -> str:
-        """
-        Renders the binary tree as a string representation.
-
-        Returns:
-            str: The string representation of the binary tree.
-        """
-        if not self.root:
-            return "<empty tree>"
-
-        lines = []
-        current_level = [self.root]
-
-        while any(current_level):
-            next_level = []
-            line = ""
-
-            for node in current_level:
-                if node:
-                    line += f" {node.item} "
-                    if node.left:
-                        next_level.append(node.left)
-                    if node.right:
-                        next_level.append(node.right)
-                else:
-                    line += "   "  # Placeholder for empty node
-
-            lines.append(line)
-            current_level = next_level
-        # Join lines with newline characters
-        return "\n".join(lines)
 
 
 def construct_binary_tree(seq: list[Any]) -> BinaryTree:
@@ -227,6 +195,9 @@ def construct_binary_tree_rec(seq: list[Any], l, r) -> Optional[BinaryNode]:
 
 
 class BSTNode(BinaryNode):
+
+    left: BSTNode
+    right: BSTNode
 
     def subtree_find(self, k) -> Optional[BSTNode]:
         # find node storing k else find predecessor
@@ -283,11 +254,13 @@ class BSTNode(BinaryNode):
             self.item = new_node.item
 
 
-class Set_Binary_Tree(BinaryTree):
+class SetBinaryTree(BinaryTree):
     """
     Implementation of a Binary Search Tree (BST) that represents a set of unique elements.
     Inherits from Binary_Tree.
     """
+
+    root: Optional[BSTNode]
 
     def __init__(self):
         """
