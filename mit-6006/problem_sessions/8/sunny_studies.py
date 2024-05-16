@@ -1,12 +1,11 @@
 """
-Module: sunny_studies
-
-This module contains a function to help Tim the Beaver 
+This module helps Tim the Beaver 
 decide which days to study and which days to play outside
-to maximize his happiness based on the weather forecast. 
-The algorithm ensures that Tim never plays outside 
-for more than two consecutive days, 
-while maximizing the total happiness over a given number of days.
+to maximize his happiness based on the weather forecast.
+When he plays outside on day i his happiness changes by temperature[i].
+Tim never plays outside for more than two consecutive days, 
+and his goal is to maximize the total happiness over a sequence of days
+with given temperatures.
 """
 
 from typing import List

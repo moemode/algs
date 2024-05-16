@@ -1,8 +1,18 @@
+"""
+Tests for sunny_studies.py
+"""
+
 import unittest
 from sunny_studies import maximize_happiness_memo, maximize_happiness_iterative
 
 
 class TestSunnyStudies(unittest.TestCase):
+    """
+    This class contains unit tests for the functions
+    maximize_happiness_memo and maximize_happiness_iterative
+    in the sunny_studies module.
+    """
+
     def test_alternating_weather(self):
         # Scenario: Alternating sunny and rainy days
         weather = [-3, -4, -1]
